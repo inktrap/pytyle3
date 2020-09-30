@@ -28,14 +28,17 @@ rm *.pyc **/*.pyc
 
 ## Use xcffib instead of xcb
 
-Actually, don't do this! pytyle3's ``compat.py`` imports xcffib and you can replace the remaining xcb imports selectively. 
+Actually, don't do this! xpybutil's ``compat.py`` imports xcffib and you can replace the remaining xcb imports selectively.
 
 ~~~
 sed 's/xcb/xcffib/g' -i *.py
 sed 's/xcb/xcffib/g' -i **/*.py
 ~~~
 
+
 Also, there are some exceptions: <https://github.com/tych0/xcffib>
+
+However, I replaced xcb.xproto imports in ``pt3/client.py``
 
 
 ## Tabs to spaces

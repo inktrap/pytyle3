@@ -1,6 +1,9 @@
 import time
 
-import xcb.xproto
+try:
+    import xcffib.xproto as xcb_xproto
+except ImportError:
+    import xcb.xproto as xcb_xproto
 
 import xpybutil
 import xpybutil.event as event
@@ -128,6 +131,7 @@ class Client(object):
         try:
             window.moveresize(self.wid, x, y, w, h)
         except:
+            debug("Encountered a bare except and it passed.")
             pass
 
     def is_button_pressed(self):
@@ -136,22 +140,22 @@ class Client(object):
             if pointer is None:
                 return False
 
-            if (xcb.xproto.KeyButMask.Button1 & pointer.mask or
-                xcb.xproto.KeyButMask.Button3 & pointer.mask):
+            if (xcb_xproto.KeyButMask.Button1 & pointer.mask or
+                xcb_xproto.KeyButMask.Button3 & pointer.mask):
                 return True
-        except xcb.xproto.BadWindow:
+        except xcb_xproto.BadWindow:
             pass
 
         return False
 
     def cb_focus_in(self, e):
-        if self.moving and e.mode == xcb.xproto.NotifyMode.Ungrab:
+        if self.moving and e.mode == xcb_xproto.NotifyMode.Ungrab:
             state.GRAB = None
             self.moving = False
             tile.update_client_moved(self)
 
     def cb_focus_out(self, e):
-        if e.mode == xcb.xproto.NotifyMode.Grab:
+        if e.mode == xcb_xproto.NotifyMode.Grab:
             state.GRAB = self
 
     def cb_configure_notify(self, e):
@@ -178,7 +182,7 @@ class Client(object):
                 if should_ignore(self.wid):
                     untrack_client(self.wid)
                     return
-        except xcb.xproto.BadWindow:
+        except xcb_xproto.BadWindow:
             pass # S'ok...
 
     def __str__(self):
@@ -206,7 +210,7 @@ def track_client(client):
                 time.sleep(0.2)
 
             clients[client] = Client(client)
-    except xcb.xproto.BadWindow:
+    except xcb_xproto.BadWindow:
         debug('Window %s was destroyed before we could finish inspecting it. '
               'Untracking it...' % client)
         untrack_client(client)
