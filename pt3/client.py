@@ -1,9 +1,6 @@
 import time
 
-try:
-    import xcffib.xproto as xcb_xproto
-except ImportError:
-    import xcb.xproto as xcb_xproto
+from xpybutil.compat import xproto
 
 import xpybutil
 import xpybutil.event as event
@@ -140,22 +137,22 @@ class Client(object):
             if pointer is None:
                 return False
 
-            if (xcb_xproto.KeyButMask.Button1 & pointer.mask or
-                xcb_xproto.KeyButMask.Button3 & pointer.mask):
+            if (xproto.KeyButMask.Button1 & pointer.mask or
+                    xproto.KeyButMask.Button3 & pointer.mask):
                 return True
-        except xcb_xproto.BadWindow:
+        except xproto.BadWindow:
             pass
 
         return False
 
     def cb_focus_in(self, e):
-        if self.moving and e.mode == xcb_xproto.NotifyMode.Ungrab:
+        if self.moving and e.mode == xproto.NotifyMode.Ungrab:
             state.GRAB = None
             self.moving = False
             tile.update_client_moved(self)
 
     def cb_focus_out(self, e):
-        if e.mode == xcb_xproto.NotifyMode.Grab:
+        if e.mode == xproto.NotifyMode.Grab:
             state.GRAB = self
 
     def cb_configure_notify(self, e):
@@ -182,7 +179,7 @@ class Client(object):
                 if should_ignore(self.wid):
                     untrack_client(self.wid)
                     return
-        except xcb_xproto.BadWindow:
+        except xproto.BadWindow:
             pass # S'ok...
 
     def __str__(self):
@@ -210,7 +207,7 @@ def track_client(client):
                 time.sleep(0.2)
 
             clients[client] = Client(client)
-    except xcb_xproto.BadWindow:
+    except xproto.BadWindow:
         debug('Window %s was destroyed before we could finish inspecting it. '
               'Untracking it...' % client)
         untrack_client(client)
