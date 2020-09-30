@@ -52,8 +52,8 @@ def cycle_current_tiler():
     newtiler.active = True
 
     debug('Switching tiler from %s to %s on desktop %d' % (
-           tiler.__class__.__name__, newtiler.__class__.__name__, 
-           state.desktop))
+        tiler.__class__.__name__, newtiler.__class__.__name__,
+        state.desktop))
 
     newtiler.tile(save=False)
 
@@ -83,9 +83,12 @@ def update_client_desktop(c, olddesk):
 
 def update_client_add(c):
     assert c.desk in tilers
-    
+
     for tiler in tilers[c.desk]:
-        tiler.add(c)
+        ret = tiler.add(c)
+        debug(tiler)
+        debug(c)
+        debug(ret)
 
 def update_client_removal(c):
     assert c.desk in tilers

@@ -1,8 +1,25 @@
-# Status
+# Status/Changes
 
-Currently, for me tiling doesn't work. The keypresses are recognized but I can't activate tiling.
-Cycling through layouts, quitting pytyle aso. works, at least debugging output says so.
-Xcffib supports python3 and xpybutil should too, I guess. Maybe something is wrong with my local config, I am going to investigate this and compare it to a python2 based-pytyle.
+ - corrected some minor issues, spacing, …
+ - pytyle3 doesn't need xcb anymore, I added a small line to use xpybutil's compat :)
+ - one issue was in xpybutil's function that is called if a ``window`` is resized or moved, it expects integers but got some floats. Currently I am converting them.
+ - another issue **is**/was in xpybutil's ``keybind.py``:
+
+```
+    if e.request == xproto.Mapping.Keyboard:
+        changes = {}
+        for kc in range(*get_min_max_keycode()):
+            ...
+```
+
+This takes a long time to run and is CPU intensive. For the time being, I placed a return before the loop. However this is not ideal; the keycodes do indeed change.
+
+I'll have a look [at other tilers and how they do it](https://github.com/qtile/qtile/blob/f6710b159b7b98925fbba8edfb169896433bedd3/libqtile/backend/x11/xcbq.py#L819) or maybe I'll ask BurntSushi.
+
+ - when is ``update_keyboard_mapping`` called and why does it take so long?
+ - I know that python2.7 and python3 ``range``s are not the same, but they are not very different either, so that's not it, right?
+ - Do globals work diffently in python3? I know that for doesn't leak into the global namespace anymore …
+
 
 
 # Preparations
@@ -28,17 +45,15 @@ rm *.pyc **/*.pyc
 
 ## Use xcffib instead of xcb
 
-Actually, don't do this! xpybutil's ``compat.py`` imports xcffib and you can replace the remaining xcb imports selectively.
+Actually, don't do this!
 
 ~~~
 sed 's/xcb/xcffib/g' -i *.py
 sed 's/xcb/xcffib/g' -i **/*.py
 ~~~
 
+xpybutil's ``compat.py`` imports xcffib and you can replace the remaining xcb imports in ``pt3/client.py`` by importing from there. Also, there are some exceptions: <https://github.com/tych0/xcffib>
 
-Also, there are some exceptions: <https://github.com/tych0/xcffib>
-
-However, I replaced xcb.xproto imports in ``pt3/client.py``
 
 
 ## Tabs to spaces
