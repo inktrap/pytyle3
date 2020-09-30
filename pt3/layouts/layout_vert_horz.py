@@ -33,7 +33,7 @@ class OrientLayout(Layout):
     def untile(self):
         debug('Untiling %s' % (self))
         for c in self.store.masters + self.store.slaves:
-			c.restore()
+            c.restore()
 
         self.tiling = False
         xpybutil.conn.flush()
@@ -67,11 +67,11 @@ class OrientLayout(Layout):
             self.tile()
             
     def rotate(self):
-		assert self.tiling
-		
-		self.store.slaves.insert(0,self.store.masters.pop(0)) # move the first master to slave
-		self.store.masters.append(self.store.slaves.pop(-1)) # move the last slave to master
-		self.tile()
+        assert self.tiling
+        
+        self.store.slaves.insert(0,self.store.masters.pop(0)) # move the first master to slave
+        self.store.masters.append(self.store.slaves.pop(-1)) # move the last slave to master
+        self.tile()
 
     def clients(self):
         return self.store.masters + self.store.slaves
@@ -205,7 +205,7 @@ class VerticalLayout(OrientLayout):
 
         if mw <= 0 or mw > ww or sw <= 0 or sw > ww:
             return
-		
+        
 #Masters
         if msize:
             mh = (wh - (msize + 1) * g) / msize # Height of each window

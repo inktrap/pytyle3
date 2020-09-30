@@ -24,13 +24,13 @@ bindings = {
 # rotate: shift all windows' positions (clockwise)
 # make_master: send active window to the master position
 
-	'Control-Mod1-v': tile.cmd('tile'),
+    'Control-Mod1-v': tile.cmd('tile'),
     'Control-Mod1-BackSpace': tile.cmd('untile'),
     'Control-Mod1-s': tile.cmd('decrease_master'),
     'Control-Mod1-r': tile.cmd('increase_master'),
     'Control-Mod1-g': tile.cmd('remove_master'),
     'Control-Mod1-d': tile.cmd('add_master'),
-	'Control-Mod1-c': tile.cmd('rotate'),
+    'Control-Mod1-c': tile.cmd('rotate'),
     'Control-Mod1-h': tile.cmd('cycle'),
     'Control-Mod1-f': tile.cmd('toggle_float'),
 
