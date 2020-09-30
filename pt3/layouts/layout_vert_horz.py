@@ -7,7 +7,7 @@ import pt3.client as client
 import pt3.state as state
 from pt3.layouts import Layout
 
-import store
+from . import store
 
 class OrientLayout(Layout):
     # Start implementing abstract methods

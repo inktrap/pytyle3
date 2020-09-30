@@ -2,9 +2,7 @@ import abc
 
 import pt3.state as state
 
-class Layout(object):
-    __metaclass__ = abc.ABCMeta
-
+class Layout(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def __init__(self, desk):
         self.desk = desk # Should never change
@@ -72,7 +70,7 @@ class Layout(object):
         return '%s (desk %d) %s%s' % (
                     self.__class__.__name__, self.desk, wastr, istiling)
 
-from layout_vert_horz import VerticalLayout, HorizontalLayout
+from .layout_vert_horz import VerticalLayout, HorizontalLayout
 
 layouts = [VerticalLayout, HorizontalLayout]
 

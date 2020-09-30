@@ -2,13 +2,13 @@ import xpybutil
 import xpybutil.event as event
 import xpybutil.util as util
 
-from debug import debug
+from .debug import debug
 
-import state
-from layouts import layouts
+from . import state
+from .layouts import layouts
 
 try:
-    from config import tile_on_startup
+    from .config import tile_on_startup
 except ImportError:
     tile_on_startup = False
 
@@ -94,7 +94,7 @@ def update_client_removal(c):
         tiler.remove(c)
 
 def update_tilers():
-    for d in xrange(state.desk_num):
+    for d in range(state.desk_num):
         if d not in tilers:
             debug('Adding tilers to desktop %d' % d)
             tilers[d] = []
@@ -105,7 +105,7 @@ def update_tilers():
             if tile_on_startup:
                 tilers[d][0].tiling = True
                 tilers[d][0].tile()
-    for d in tilers.keys():
+    for d in list(tilers.keys()):
         if d >= state.desk_num:
             debug('Removing tilers from desktop %d' % d)
             del tilers[d]

@@ -8,9 +8,9 @@ conffile = os.path.join(xdg, 'pytyle3', 'config.py')
 if not os.access(conffile, os.R_OK):
     conffile = os.path.join('/', 'etc', 'xdg', 'pytyle3', 'config.py')
     if not os.access(conffile, os.R_OK):
-        print >> sys.stderr, 'UNRECOVERABLE ERROR: ' \
-                             'No configuration file found at %s' % conffile
+        print('UNRECOVERABLE ERROR: ' \
+                             'No configuration file found at %s' % conffile, file=sys.stderr)
         sys.exit(1)
 
-execfile(conffile)
+exec(compile(open(conffile, "rb").read(), conffile, 'exec'))
 

@@ -9,7 +9,7 @@ import xpybutil.util as util
 import xpybutil.window as window
 import xpybutil.xinerama as xinerama
 
-import config
+from . import config
 
 PYTYLE_STATE = 'startup'
 GRAB = None
@@ -30,7 +30,7 @@ while not _wmrunning:
             elif wm.lower() == 'kwin':
                 utilwm = window.WindowManagers.KWin
 
-            print '%s window manager is running...' % wm
+            print('%s window manager is running...' % wm)
             sys.stdout.flush()
 
     if not _wmrunning:
@@ -47,8 +47,8 @@ stacking = ewmh.get_client_list_stacking().reply()
 workarea = []
 
 def quit():
-    print 'Exiting...'
-    import tile
+    print('Exiting...')
+    from . import tile
     for tiler in tile.tilers:
         tile.get_active_tiler(tiler)[0].untile()
     sys.exit(0)

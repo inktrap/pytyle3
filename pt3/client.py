@@ -11,11 +11,11 @@ import xpybutil.rect as rect
 import xpybutil.util as util
 import xpybutil.window as window
 
-from debug import debug
+from .debug import debug
 
-import config
-import state
-import tile
+from . import config
+from . import state
+from . import tile
 
 clients = {}
 ignore = [] # Some clients are never gunna make it...
@@ -122,7 +122,7 @@ class Client(object):
     def moveresize(self, x=None, y=None, w=None, h=None):
         # Ignore this if the user is moving the window...
         if self.moving:
-            print 'Sorry but %s is moving...' % self
+            print('Sorry but %s is moving...' % self)
             return
 
         try:
@@ -190,7 +190,7 @@ def update_clients():
     for c in client_list:
         if c not in clients:
             track_client(c)
-    for c in clients.keys():
+    for c in list(clients.keys()):
         if c not in client_list:
             untrack_client(c)
 
