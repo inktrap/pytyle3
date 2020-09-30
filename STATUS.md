@@ -26,17 +26,19 @@ git clone https://github.com/BurntSushi/xpybutil
 rm *.pyc **/*.pyc
 ```
 
-Use xcffib instead of xcb:
+## Use xcffib instead of xcb
+
+Actually, don't do this! pytyle3's ``compat.py`` imports xcffib and you can replace the remaining xcb imports selectively. 
 
 ~~~
 sed 's/xcb/xcffib/g' -i *.py
 sed 's/xcb/xcffib/g' -i **/*.py
 ~~~
 
-see: <https://pypi.org/project/xcffib/0.3.2/>
+Also, there are some exceptions: <https://github.com/tych0/xcffib>
 
 
-Tabs to spaces:
+## Tabs to spaces
 
 ```
 find . -name '*.py' ! -type d -exec bash -c 'expand -t 4 "$0" > /tmp/e && mv /tmp/e "$0"' {} \;
