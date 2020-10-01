@@ -10,7 +10,7 @@ pip3 install xcffib
 
 ~~~
 git clone https://github.com/inktrap/xpybutil
-cd xpybitil
+cd xpybutil
 pip3 install .
 ~~~
 
