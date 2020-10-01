@@ -9,3 +9,4 @@ As a result, pytyle3 is ~1000 lines while pytyle2 is ~7000 lines. Additionally,
 because of a simpler design, pytyle3's memory footprint is much smaller and is 
 actually quite snappier in moving windows on the screen.
 
+**Update:** Made some [changes](https://github.com/inktrap/pytyle3/blob/master/STATUS.md), so it works with Python3 now.
