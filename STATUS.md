@@ -27,13 +27,13 @@ This takes a long time to run and is CPU intensive. For the time being, I placed
 | --- | --- | --- | --- |
 | Original keybind.py | ``output-orig.log`` | 276386821 function calls (273648645 primitive calls) | 156.309 |
 
-Then I found a comment that it one probably has to search only the first column (0), so I changed the loop …
+Then I found a comment, that most of the time, only the first column (0) has to be searched, so I changed the loop:
 
 
 | Description | Logfile | Calls | Seconds |
 | --- | --- | --- | --- |
 | Original keybind.py | ``output-orig.log`` | 276386821 function calls (273648645 primitive calls) | 156.309 |
-| Search the first column first | ``output-col0first.log`` | 41297716 function calls (40888596 primitive calls) | 23.199 seconds |
+| Search the first column first | ``output-col0first.log`` | 41297716 function calls (40888596 primitive calls) | 23.199 |
 
 
 This is a really nice, great improvement and I only switched two lines!! Wow!
@@ -52,7 +52,7 @@ Now the times are manageable, however, combining the two approaches reduces the 
 | Original keybind.py | ``output-orig.log`` | 276386821 function calls (273648645 primitive calls) | 156.309 |
 | Search the first column first | ``output-col0first.log`` | 41297716 function calls (40888596 primitive calls) | 23.199 |
 | min max values as params | ``output-params.log`` | 747703 function calls (743703 primitive calls) | 0.383 |
-| both, first colum and min max | ``output-col0firstANDparams.log`` | 456556 function calls (452556 primitive calls) | 0.262 seconds |
+| both, first colum and min max | ``output-col0firstANDparams.log`` | 456556 function calls (452556 primitive calls) | 0.262 |
 
 I am really happy with this :)
 

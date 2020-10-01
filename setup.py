@@ -25,7 +25,7 @@ setup(
     platforms="POSIX",
     packages=["pt3", "pt3/layouts"],
     data_files=[
-        ("share/doc/pytyle3", ["README", "COPYING", "INSTALL"]),
+        ("share/doc/pytyle3", ["README.md", "COPYING.md", "INSTALL.md"]),
         ("/etc/xdg/pytyle3", ["config.py", "keybind.py"]),
     ],
     scripts=["pytyle3"],
