@@ -1,4 +1,5 @@
 import sys
+from pprint import pprint
 
 from . import config
 
@@ -10,7 +11,8 @@ def debug(s):
     sys.stdout.flush()
 
 
-def debug_clients(clients):
-    debug("%i clients:" % len(clients))
-    clients_formatted = "\n     ".join(list(map(str, clients.keys())))
-    debug(" " * 3 + clients_formatted)
+def debug_object(o):
+    if not config.debug:
+        return
+    pprint(o)
+    sys.stdout.flush()

@@ -11,7 +11,7 @@ import xpybutil.rect as rect
 import xpybutil.util as util
 import xpybutil.window as window
 
-from .debug import debug, debug_clients
+from .debug import debug, debug_object
 
 from . import config
 from . import state
@@ -220,7 +220,7 @@ def track_client(client):
     debug("tracking client %s" % str(client))
     assert client not in clients
 
-    # debug_clients(clients)
+    # debug_object(clients)
 
     try:
         if not should_ignore(client):
@@ -244,7 +244,7 @@ def track_client(client):
         debug("track_client untracked client %s" % str(client))
 
     # debug("Clients at the end of track_client")
-    # debug_clients(clients)
+    # debug_object(clients)
 
 
 def untrack_client(client):
@@ -257,12 +257,12 @@ def untrack_client(client):
     del clients[client]
     c.remove()
     # debug("Clients at the end of untrack_client")
-    # debug_clients(clients)
+    # debug_object(clients)
 
 
 def should_ignore(client):
     debug("Entering should_ignore %s" % str(client))
-    # debug_clients(clients)
+    # debug_object(clients)
     # debug("This client: %s" % str(client))
     # Don't waste time on clients we'll never possibly tile
     if client in ignore:
