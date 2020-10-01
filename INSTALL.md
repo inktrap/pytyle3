@@ -17,7 +17,7 @@ pip3 install .
 ~~~
 
 
-# Installation
+# Install pytyle3
 
 For the time being, just install it from the repository:
 
@@ -39,7 +39,7 @@ python3 ./pytyle3 --debug
 If you disabled debugging in ``~/.config/pytyle3`` but still see debugging output, check ``xpybutil/xpybutil/config.py``.
 
 
-# Uninstall
+# Uninstall pytyle3 and/or xpybutil
 
 Just run pip to uninstall pytyle3 or xpybutil:
 
