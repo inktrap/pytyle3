@@ -14,11 +14,13 @@
 
 This takes a long time to run and is CPU intensive. For the time being, I placed a return before the loop. However this is not ideal; the keycodes do indeed change.
 
-~~I'll have a look [at other tilers and how they do it](https://github.com/qtile/qtile/blob/f6710b159b7b98925fbba8edfb169896433bedd3/libqtile/backend/x11/xcbq.py#L819) or maybe I'll ask BurntSushi.
+~~I'll have a look [at other tilers and how they do it](https://github.com/qtile/qtile/blob/f6710b159b7b98925fbba8edfb169896433bedd3/libqtile/backend/x11/xcbq.py#L819) or maybe I'll ask BurntSushi.~~
+
+~~**Questions:**~~
 
  - when is ``update_keyboard_mapping`` called and why does it take so long?
  - I know that python2.7 and python3 ``range``s are not the same, but they are not very different either, so that's not it, right?
- - Do globals work diffently in python3? I know that for doesn't leak into the global namespace anymore …~~
+ - Do globals work diffently in python3? I know that for doesn't leak into the global namespace anymore …
 
 
 **Update:** I did some [quick profiling](https://github.com/inktrap/xpybutil/tree/master/profile) for the keyboard mapping updates:
@@ -54,17 +56,8 @@ Now the times are manageable, however, combining the two approaches reduces the 
 | min max values as params | ``output-params.log`` | 747703 function calls (743703 primitive calls) | 0.383 |
 | both, first colum and min max | ``output-col0firstANDparams.log`` | 456556 function calls (452556 primitive calls) | 0.262 |
 
+
 I am really happy with this :)
-
-
-# Preparations
-
-Install xcffib:
-
-~~~
-sudo apt-get install libxcb-render0-dev
-pip3 install xcffib
-~~~
 
 
 # Changes to support python3
@@ -78,6 +71,7 @@ git clone https://github.com/BurntSushi/xpybutil
 rm *.pyc **/*.pyc
 ```
 
+
 ## Use xcffib instead of xcb
 
 Actually, don't do this!
@@ -90,39 +84,10 @@ sed 's/xcb/xcffib/g' -i **/*.py
 xpybutil's ``compat.py`` imports xcffib and you can replace the remaining xcb imports in ``pt3/client.py`` by importing from there. Also, there are some exceptions: <https://github.com/tych0/xcffib>
 
 
-
 ## Tabs to spaces
 
 ```
 find . -name '*.py' ! -type d -exec bash -c 'expand -t 4 "$0" > /tmp/e && mv /tmp/e "$0"' {} \;
 ```
 
-
-# Install
-
-
-Change to the pytyle3/xpybutil folder and run:
-
-```
-pip3 install .
-```
-
-I repeated the "Changes to support python3" and "Install" steps for pytyle3.
-
-
-# Configure Pytyle3 and run it
-
-Create/Edit these configs:
-
-~~~
-~/.config/pytyle3/keybind.py
-~/.config/pytyle3/config.py
-~~~
-
-Run it:
-
-```
-python3 ./pytyle3
-python3 ./pytyle3 --debug
-```
 
