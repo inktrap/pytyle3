@@ -8,6 +8,8 @@ sudo apt-get install libxcb-render0-dev
 pip3 install xcffib
 ```
 
+Install [xpybutil](https://github.com/inktrap/xpybutil):
+
 ~~~
 git clone https://github.com/inktrap/xpybutil
 cd xpybutil
@@ -39,7 +41,7 @@ If you disabled debugging in ``~/.config/pytyle3`` but still see debugging outpu
 
 # Uninstall
 
-Just run pip to uninstall it:
+Just run pip to uninstall pytyle3 or xpybutil:
 
 ```
 pip3 uninstall pytyle3 xpybutil
