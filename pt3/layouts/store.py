@@ -3,26 +3,35 @@ import xpybutil.ewmh as ewmh
 import xpybutil.util as util
 import xpybutil.motif as motif
 
+
 class Store(object):
     def __init__(self):
         self.masters, self.slaves, self.floats = [], [], []
-        self.mcnt = 1 # Number of masters allowed
+        self.mcnt = 1  # Number of masters allowed
 
     def add(self, c, above=None):
         if c.floating:
-            if getattr(config, 'remove_decorations', False):
-                motif.set_hints_checked(c.wid,2,decoration=1).check() # add decorations
-            if getattr(config, 'tiles_below', False):
-                ewmh.request_wm_state_checked(c.wid,0,util.get_atom('_NET_WM_STATE_BELOW')).check()
+            if getattr(config, "remove_decorations", False):
+                motif.set_hints_checked(
+                    c.wid, 2, decoration=1
+                ).check()  # add decorations
+            if getattr(config, "tiles_below", False):
+                ewmh.request_wm_state_checked(
+                    c.wid, 0, util.get_atom("_NET_WM_STATE_BELOW")
+                ).check()
             self.floats.append(c)
         else:
-            #restore window if maximized
-            #ewmh.request_wm_state_checked(c.wid,0,util.get_atom('_NET_WM_STATE_MAXIMIZED_VERT')).check()
-            #ewmh.request_wm_state_checked(c.wid,0,util.get_atom('_NET_WM_STATE_MAXIMIZED_HORZ')).check()
-            if getattr(config, 'remove_decorations', False):
-                motif.set_hints_checked(c.wid,2,decoration=2).check() #remove decorations
-            if getattr(config, 'tiles_below', False):
-                ewmh.request_wm_state_checked(c.wid,1,util.get_atom('_NET_WM_STATE_BELOW')).check()
+            # restore window if maximized
+            # ewmh.request_wm_state_checked(c.wid,0,util.get_atom('_NET_WM_STATE_MAXIMIZED_VERT')).check()
+            # ewmh.request_wm_state_checked(c.wid,0,util.get_atom('_NET_WM_STATE_MAXIMIZED_HORZ')).check()
+            if getattr(config, "remove_decorations", False):
+                motif.set_hints_checked(
+                    c.wid, 2, decoration=2
+                ).check()  # remove decorations
+            if getattr(config, "tiles_below", False):
+                ewmh.request_wm_state_checked(
+                    c.wid, 1, util.get_atom("_NET_WM_STATE_BELOW")
+                ).check()
             if len(self.masters) < self.mcnt:
                 if c in self.slaves:
                     self.slaves.remove(c)
@@ -63,17 +72,17 @@ class Store(object):
             self.slaves.append(self.masters.pop(newslav))
 
     def switch(self, c1, c2):
-        ms, ss = self.masters, self.slaves # alias
+        ms, ss = self.masters, self.slaves  # alias
         if c1 in ms and c2 in ms:
             i1, i2 = ms.index(c1), ms.index(c2)
             ms[i1], ms[i2] = ms[i2], ms[i1]
         elif c1 in self.slaves and c2 in self.slaves:
             i1, i2 = ss.index(c1), ss.index(c2)
             ss[i1], ss[i2] = ss[i2], ss[i1]
-        elif c1 in ms: # and c2 in self.slaves
+        elif c1 in ms:  # and c2 in self.slaves
             i1, i2 = ms.index(c1), ss.index(c2)
             ms[i1], ss[i2] = ss[i2], ms[i1]
-        else: # c1 in ss and c2 in ms
+        else:  # c1 in ss and c2 in ms
             i1, i2 = ss.index(c1), ms.index(c2)
             ss[i1], ms[i2] = ms[i2], ss[i1]
 
@@ -86,7 +95,8 @@ class Store(object):
         return len(self.masters) + len(self.slaves)
 
     def __str__(self):
-        s = ['Masters: %s' % [str(c) for c in self.masters],
-             'Slaves: %s' % [str(c) for c in self.slaves]]
-        return '\n'.join(s)
-
+        s = [
+            "Masters: %s" % [str(c) for c in self.masters],
+            "Slaves: %s" % [str(c) for c in self.slaves],
+        ]
+        return "\n".join(s)

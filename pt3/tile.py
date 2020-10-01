@@ -14,15 +14,17 @@ except ImportError:
 
 tilers = {}
 
+
 def debug_state():
-    debug('-' * 45)
+    debug("-" * 45)
     for d in tilers:
         if d not in state.visibles:
             continue
         tiler, _ = get_active_tiler(d)
         debug(tiler)
         debug(tiler.store)
-        debug('-' * 45)
+        debug("-" * 45)
+
 
 def cmd(action):
     def _cmd():
@@ -31,15 +33,16 @@ def cmd(action):
 
         tiler, _ = get_active_tiler(state.desktop)
 
-        if action == 'tile':
+        if action == "tile":
             tiler.tile()
         elif tiler.tiling:
-            if action == 'cycle':
+            if action == "cycle":
                 cycle_current_tiler()
             else:
                 getattr(tiler, action)()
 
     return _cmd
+
 
 def cycle_current_tiler():
     assert state.desktop in tilers
@@ -51,11 +54,13 @@ def cycle_current_tiler():
     tiler.tiling = False
     newtiler.active = True
 
-    debug('Switching tiler from %s to %s on desktop %d' % (
-        tiler.__class__.__name__, newtiler.__class__.__name__,
-        state.desktop))
+    debug(
+        "Switching tiler from %s to %s on desktop %d"
+        % (tiler.__class__.__name__, newtiler.__class__.__name__, state.desktop)
+    )
 
     newtiler.tile(save=False)
+
 
 def get_active_tiler(desk):
     assert desk in tilers
@@ -64,12 +69,14 @@ def get_active_tiler(desk):
         if tiler.active:
             return tiler, i
 
+
 def update_client_moved(c):
     assert c.desk in tilers
 
     tiler, _ = get_active_tiler(c.desk)
     if tiler.tiling:
         tiler.tile()
+
 
 def update_client_desktop(c, olddesk):
     assert c.desk in tilers
@@ -81,6 +88,7 @@ def update_client_desktop(c, olddesk):
     for tiler in tilers[c.desk]:
         tiler.add(c)
 
+
 def update_client_add(c):
     assert c.desk in tilers
 
@@ -90,16 +98,18 @@ def update_client_add(c):
         debug(c)
         debug(ret)
 
+
 def update_client_removal(c):
     assert c.desk in tilers
 
     for tiler in tilers[c.desk]:
         tiler.remove(c)
 
+
 def update_tilers():
     for d in range(state.desk_num):
         if d not in tilers:
-            debug('Adding tilers to desktop %d' % d)
+            debug("Adding tilers to desktop %d" % d)
             tilers[d] = []
             for lay in layouts:
                 t = lay(d)
@@ -110,24 +120,25 @@ def update_tilers():
                 tilers[d][0].tile()
     for d in list(tilers.keys()):
         if d >= state.desk_num:
-            debug('Removing tilers from desktop %d' % d)
+            debug("Removing tilers from desktop %d" % d)
             del tilers[d]
+
 
 def cb_property_notify(e):
     aname = util.get_atom_name(e.atom)
 
-    if aname == '_NET_NUMBER_OF_DESKTOPS':
+    if aname == "_NET_NUMBER_OF_DESKTOPS":
         update_tilers()
-    elif aname == '_NET_CURRENT_DESKTOP':
+    elif aname == "_NET_CURRENT_DESKTOP":
         if len(state.visibles) == 1:
             tiler, _ = get_active_tiler(state.desktop)
             if tiler.tiling:
                 tiler.tile()
-    elif aname == '_NET_VISIBLE_DESKTOPS':
+    elif aname == "_NET_VISIBLE_DESKTOPS":
         for d in state.visibles:
             tiler, _ = get_active_tiler(d)
             if tiler.tiling:
                 tiler.tile()
 
-event.connect('PropertyNotify', xpybutil.root, cb_property_notify)
 
+event.connect("PropertyNotify", xpybutil.root, cb_property_notify)

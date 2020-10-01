@@ -20,27 +20,27 @@ from . import tile
 clients = {}
 ignore = []  # Some clients are never gunna make it...
 
+
 class Client(object):
     def __init__(self, wid):
         self.wid = wid
 
-        self.name = ewmh.get_wm_name(self.wid).reply() or 'N/A'
-        debug('Connecting to %s' % self)
+        self.name = ewmh.get_wm_name(self.wid).reply() or "N/A"
+        debug("Connecting to %s" % self)
 
-        window.listen(self.wid, 'PropertyChange', 'FocusChange')
-        event.connect('PropertyNotify', self.wid, self.cb_property_notify)
-        event.connect('FocusIn', self.wid, self.cb_focus_in)
-        event.connect('FocusOut', self.wid, self.cb_focus_out)
+        window.listen(self.wid, "PropertyChange", "FocusChange")
+        event.connect("PropertyNotify", self.wid, self.cb_property_notify)
+        event.connect("FocusIn", self.wid, self.cb_focus_in)
+        event.connect("FocusOut", self.wid, self.cb_focus_out)
 
         # This connects to the parent window (decorations)
         # We get all resize AND move events... might be too much
         self.parentid = window.get_parent_window(self.wid)
-        window.listen(self.parentid, 'StructureNotify')
-        event.connect('ConfigureNotify', self.parentid,
-                      self.cb_configure_notify)
+        window.listen(self.parentid, "StructureNotify")
+        event.connect("ConfigureNotify", self.parentid, self.cb_configure_notify)
         debug("Parent: %s" % str(self.parentid))
         # A window should only be floating if that is default
-        self.floating = getattr(config, 'floats_default', False)
+        self.floating = getattr(config, "floats_default", False)
 
         # Not currently in a "moving" state
         self.moving = False
@@ -56,41 +56,43 @@ class Client(object):
 
         # First cut at saving client geometry
         self.save()
-        debug('Init finished and save() called %s' % self)
+        debug("Init finished and save() called %s" % self)
 
     def remove(self):
         tile.update_client_removal(self)
-        debug('Disconnecting from %s' % self)
-        event.disconnect('ConfigureNotify', self.parentid)
-        event.disconnect('PropertyNotify', self.wid)
-        event.disconnect('FocusIn', self.wid)
-        event.disconnect('FocusOut', self.wid)
-        debug('Disconnect done %s' % self)
+        debug("Disconnecting from %s" % self)
+        event.disconnect("ConfigureNotify", self.parentid)
+        event.disconnect("PropertyNotify", self.wid)
+        event.disconnect("FocusIn", self.wid)
+        event.disconnect("FocusOut", self.wid)
+        debug("Disconnect done %s" % self)
 
     def activate(self):
         ewmh.request_active_window_checked(self.wid, source=1).check()
-        debug('Activate done %s' % self)
+        debug("Activate done %s" % self)
 
     def unmaximize(self):
-        vatom = util.get_atom('_NET_WM_STATE_MAXIMIZED_VERT')
-        hatom = util.get_atom('_NET_WM_STATE_MAXIMIZED_HORZ')
+        vatom = util.get_atom("_NET_WM_STATE_MAXIMIZED_VERT")
+        hatom = util.get_atom("_NET_WM_STATE_MAXIMIZED_HORZ")
         ewmh.request_wm_state_checked(self.wid, 0, vatom, hatom).check()
 
     def save(self):
         self.saved_geom = window.get_geometry(self.wid)
         self.saved_state = ewmh.get_wm_state(self.wid).reply()
-        debug('Save done %s' % self)
+        debug("Save done %s" % self)
 
     def restore(self):
-        debug('Restoring %s' % self)
-        if getattr(config, 'remove_decorations', False):
-            motif.set_hints_checked(self.wid,2,decoration=1).check()
-        if getattr(config, 'tiles_below', False):
-            ewmh.request_wm_state_checked(self.wid,0,util.get_atom('_NET_WM_STATE_BELOW')).check()
+        debug("Restoring %s" % self)
+        if getattr(config, "remove_decorations", False):
+            motif.set_hints_checked(self.wid, 2, decoration=1).check()
+        if getattr(config, "tiles_below", False):
+            ewmh.request_wm_state_checked(
+                self.wid, 0, util.get_atom("_NET_WM_STATE_BELOW")
+            ).check()
         if self.saved_state:
             fullymaxed = False
-            vatom = util.get_atom('_NET_WM_STATE_MAXIMIZED_VERT')
-            hatom = util.get_atom('_NET_WM_STATE_MAXIMIZED_HORZ')
+            vatom = util.get_atom("_NET_WM_STATE_MAXIMIZED_VERT")
+            hatom = util.get_atom("_NET_WM_STATE_MAXIMIZED_HORZ")
 
             if vatom in self.saved_state and hatom in self.saved_state:
                 fullymaxed = True
@@ -104,8 +106,7 @@ class Client(object):
             if fullymaxed:
                 return
 
-        mnow = rect.get_monitor_area(window.get_geometry(self.wid),
-                                     state.monitors)
+        mnow = rect.get_monitor_area(window.get_geometry(self.wid), state.monitors)
         mold = rect.get_monitor_area(self.saved_geom, state.monitors)
 
         x, y, w, h = self.saved_geom
@@ -124,14 +125,13 @@ class Client(object):
             w *= xrat
             h *= yrat
 
-
         # debug("Calling moveresize in restore() for %s" % self)
         window.moveresize(self.wid, x, y, w, h)
 
     def moveresize(self, x=None, y=None, w=None, h=None):
         # Ignore this if the user is moving the window...
         if self.moving:
-            print('Sorry but %s is moving ...' % self)
+            print("Sorry but %s is moving ..." % self)
             return
 
         try:
@@ -148,8 +148,10 @@ class Client(object):
                 debug("pointer is None in is_button_pressed() for %s" % self)
                 return False
 
-            if (xproto.KeyButMask.Button1 & pointer.mask or
-                    xproto.KeyButMask.Button3 & pointer.mask):
+            if (
+                xproto.KeyButMask.Button1 & pointer.mask
+                or xproto.KeyButMask.Button3 & pointer.mask
+            ):
                 debug("pointer is not None in is_button_pressed() for %s" % self)
                 return True
         except xproto.BadWindow:
@@ -176,7 +178,7 @@ class Client(object):
         aname = util.get_atom_name(e.atom)
 
         try:
-            if aname == '_NET_WM_DESKTOP':
+            if aname == "_NET_WM_DESKTOP":
                 if should_ignore(self.wid):
                     untrack_client(self.wid)
                     return
@@ -188,7 +190,7 @@ class Client(object):
                     tile.update_client_desktop(self, olddesk)
                 else:
                     self.desk = olddesk
-            elif aname == '_NET_WM_STATE':
+            elif aname == "_NET_WM_STATE":
                 if should_ignore(self.wid):
                     untrack_client(self.wid)
                     return
@@ -196,7 +198,8 @@ class Client(object):
             pass  # S'ok...
 
     def __str__(self):
-        return '{%s (%d)}' % (self.name[0:30], self.wid)
+        return "{%s (%d)}" % (self.name[0:30], self.wid)
+
 
 def update_clients():
     debug("Update clients")
@@ -212,6 +215,7 @@ def update_clients():
             untrack_client(c)
     # debug("leaving track clients")
 
+
 def track_client(client):
     debug("tracking client %s" % str(client))
     assert client not in clients
@@ -220,7 +224,7 @@ def track_client(client):
 
     try:
         if not should_ignore(client):
-            if state.PYTYLE_STATE == 'running':
+            if state.PYTYLE_STATE == "running":
                 debug("pytyle is %s" % state.PYTYLE_STATE)
                 # This is truly unfortunate and only seems to be necessary when
                 # a client comes back from an iconified state. This causes a
@@ -232,13 +236,16 @@ def track_client(client):
         else:
             debug("track_client ignores client.")
     except xproto.BadWindow:
-        debug('Window %s was destroyed before we could finish inspecting it. '
-              'Untracking it...' % client)
+        debug(
+            "Window %s was destroyed before we could finish inspecting it. "
+            "Untracking it..." % client
+        )
         untrack_client(client)
         debug("track_client untracked client %s" % str(client))
 
-    #debug("Clients at the end of track_client")
-    #debug_clients(clients)
+    # debug("Clients at the end of track_client")
+    # debug_clients(clients)
+
 
 def untrack_client(client):
     debug("Untracking client %s" % str(client))
@@ -252,15 +259,16 @@ def untrack_client(client):
     # debug("Clients at the end of untrack_client")
     # debug_clients(clients)
 
+
 def should_ignore(client):
     debug("Entering should_ignore %s" % str(client))
-    #debug_clients(clients)
-    #debug("This client: %s" % str(client))
+    # debug_clients(clients)
+    # debug("This client: %s" % str(client))
     # Don't waste time on clients we'll never possibly tile
     if client in ignore:
-        #debug("Ignoring client %s" % client)
-        #debug("Ignore is:")
-        #debug(ignore)
+        # debug("Ignoring client %s" % client)
+        # debug("Ignore is:")
+        # debug(ignore)
         return True
 
     nm = ewmh.get_wm_name(client).reply()
@@ -272,20 +280,19 @@ def should_ignore(client):
             matchNames = set([inst.lower(), cls.lower()])
 
             if matchNames.intersection(config.ignore):
-                debug('Ignoring %s because it is in the ignore list' % nm)
+                debug("Ignoring %s because it is in the ignore list" % nm)
                 return True
 
-            if hasattr(config, 'tile_only') and config.tile_only:
+            if hasattr(config, "tile_only") and config.tile_only:
                 if not matchNames.intersection(config.tile_only):
-                    debug('Ignoring %s because it is not in the tile_only '
-                      'list' % nm)
+                    debug("Ignoring %s because it is not in the tile_only " "list" % nm)
                 debug("Ignoring client %s" % client)
                 return True
         except ValueError:
             pass
 
     if icccm.get_wm_transient_for(client).reply() is not None:
-        debug('Ignoring %s because it is transient' % nm)
+        debug("Ignoring %s because it is transient" % nm)
         ignore.append(client)
         return True
 
@@ -294,48 +301,54 @@ def should_ignore(client):
         for atom in wtype:
             aname = util.get_atom_name(atom)
 
-            if aname in ('_NET_WM_WINDOW_TYPE_DESKTOP',
-                         '_NET_WM_WINDOW_TYPE_DOCK',
-                         '_NET_WM_WINDOW_TYPE_TOOLBAR',
-                         '_NET_WM_WINDOW_TYPE_MENU',
-                         '_NET_WM_WINDOW_TYPE_UTILITY',
-                         '_NET_WM_WINDOW_TYPE_SPLASH',
-                         '_NET_WM_WINDOW_TYPE_DIALOG',
-                         '_NET_WM_WINDOW_TYPE_DROPDOWN_MENU',
-                         '_NET_WM_WINDOW_TYPE_POPUP_MENU',
-                         '_NET_WM_WINDOW_TYPE_TOOLTIP',
-                         '_NET_WM_WINDOW_TYPE_NOTIFICATION',
-                         '_NET_WM_WINDOW_TYPE_COMBO',
-                         '_NET_WM_WINDOW_TYPE_DND'):
-                debug('Ignoring %s because it has type %s' % (nm, aname))
+            if aname in (
+                "_NET_WM_WINDOW_TYPE_DESKTOP",
+                "_NET_WM_WINDOW_TYPE_DOCK",
+                "_NET_WM_WINDOW_TYPE_TOOLBAR",
+                "_NET_WM_WINDOW_TYPE_MENU",
+                "_NET_WM_WINDOW_TYPE_UTILITY",
+                "_NET_WM_WINDOW_TYPE_SPLASH",
+                "_NET_WM_WINDOW_TYPE_DIALOG",
+                "_NET_WM_WINDOW_TYPE_DROPDOWN_MENU",
+                "_NET_WM_WINDOW_TYPE_POPUP_MENU",
+                "_NET_WM_WINDOW_TYPE_TOOLTIP",
+                "_NET_WM_WINDOW_TYPE_NOTIFICATION",
+                "_NET_WM_WINDOW_TYPE_COMBO",
+                "_NET_WM_WINDOW_TYPE_DND",
+            ):
+                debug("Ignoring %s because it has type %s" % (nm, aname))
                 ignore.append(client)
                 return True
 
     wstate = ewmh.get_wm_state(client).reply()
     if wstate is None:
-        debug('Ignoring %s because it does not have a state' % nm)
+        debug("Ignoring %s because it does not have a state" % nm)
         return True
 
     for atom in wstate:
         aname = util.get_atom_name(atom)
 
         # For now, while I decide how to handle these guys
-        if aname == '_NET_WM_STATE_STICKY':
-            debug('Ignoring %s because it is sticky and they are weird' % nm)
+        if aname == "_NET_WM_STATE_STICKY":
+            debug("Ignoring %s because it is sticky and they are weird" % nm)
             return True
-        if aname in ('_NET_WM_STATE_SHADED', '_NET_WM_STATE_HIDDEN',
-                     '_NET_WM_STATE_FULLSCREEN', '_NET_WM_STATE_MODAL'):
-            debug('Ignoring %s because it has state %s' % (nm, aname))
+        if aname in (
+            "_NET_WM_STATE_SHADED",
+            "_NET_WM_STATE_HIDDEN",
+            "_NET_WM_STATE_FULLSCREEN",
+            "_NET_WM_STATE_MODAL",
+        ):
+            debug("Ignoring %s because it has state %s" % (nm, aname))
             return True
 
     d = ewmh.get_wm_desktop(client).reply()
-    if d == 0xffffffff:
-        debug('Ignoring %s because it\'s on all desktops'
-              '(not implemented)' % nm)
+    if d == 0xFFFFFFFF:
+        debug("Ignoring %s because it's on all desktops" "(not implemented)" % nm)
         return True
 
     debug("Not ignoring client %s" % client)
     return False
+
 
 def cb_property_notify(e):
     debug("Entering cb_property_notify")
@@ -343,10 +356,10 @@ def cb_property_notify(e):
     aname = util.get_atom_name(e.atom)
     debug(str(aname))
 
-    if aname == '_NET_CLIENT_LIST_STACKING':
+    if aname == "_NET_CLIENT_LIST_STACKING":
         cu = update_clients()
         debug(str("Clients updated: %s" % cu))
 
-event.connect('PropertyNotify', xpybutil.root, cb_property_notify)
-debug("bottom event.connect called, root is: %s" % str(xpybutil.root))
 
+event.connect("PropertyNotify", xpybutil.root, cb_property_notify)
+debug("bottom event.connect called, root is: %s" % str(xpybutil.root))

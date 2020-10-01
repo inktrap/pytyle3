@@ -1,7 +1,7 @@
-# A list of windows to ignore... 
+# A list of windows to ignore...
 # will search both the class and role of the WM_CLASS property
 # case-insensitive
-ignore = ['gmrun', 'qjackctl', 'viewnior', 'gnome-screenshot', 'mplayer', 'file-roller']
+ignore = ["gmrun", "qjackctl", "viewnior", "gnome-screenshot", "mplayer", "file-roller"]
 
 # If this list is non-empty, only windows in the list will be tiled.
 # The matching algorithm is precisely the same as for 'ignore'.
@@ -31,11 +31,10 @@ proportion_change = 0.05
 # head. They should be in the following order: Left to right, top to bottom.
 # Make sure to set 'use_margins' to True!
 use_margins = False
-margins = [ {'top': 0, 'bottom': 1, 'left': 0, 'right': 0} ]
+margins = [{"top": 0, "bottom": 1, "left": 0, "right": 0}]
 
 # Leave some empty space between windows
 gap = 0
 
 # Whether to send any debug information to stdout
 debug = False
-
